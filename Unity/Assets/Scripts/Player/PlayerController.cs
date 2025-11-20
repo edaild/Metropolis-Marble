@@ -14,7 +14,9 @@ public class PlayerController : MonoBehaviour
     public bool isMoving;
     public Collider player_collider;
     public int currentPositionIndex;
-
+    public int diceResult;
+    public GameObject dicePrefab;
+    public Transform diceSpawnPoint;
     private bool isreturn;
 
     public void Awake()
@@ -32,54 +34,49 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (isMoving == true && targetPosition != null)
-            HandleMove();
-        
-
-        if(transform.position == fnisyPlayerPosition)
-            isMoving = false;
 
         if (Input.GetKeyDown(KeyCode.N) && !isMoving)
         {
-            int diceResult = Random.Range(1, 7);
+            diceResult = Random.Range(1, 7);
             Debug.Log($"주사위 수는?: {diceResult}");
+            
+            if(dicePrefab != null && diceSpawnPoint != null)
+                Instantiate(dicePrefab, diceSpawnPoint.position, Quaternion.identity);
 
-            int nextIndex = (currentPositionIndex + diceResult) % boardPositions.Count;
-            targetPosition = boardPositions[nextIndex];
-            currentPositionIndex += nextIndex;
-            isMoving = true;
+            StartCoroutine(MoveTiles(diceResult));
         }
-
-        ResetCurrentPositionIndex();
-
-
     }
 
-    private void ResetCurrentPositionIndex()
+    IEnumerator MoveTiles(int steps)
     {
-        if(currentPositionIndex >= 28)
-            currentPositionIndex = 0;
+        isMoving = true;
+        yield return new WaitForSeconds(2f);
+
+        for(int i = 0; i < steps; i++)
+        {
+            int nextIndex = (currentPositionIndex + 1) % boardPositions.Count;
+            targetPosition = boardPositions[nextIndex];
+
+            yield return StartCoroutine(MoveToNextTile());
+
+            currentPositionIndex = nextIndex;
+        }
     }
 
-    private void HandleMove()
+    IEnumerator MoveToNextTile()
     {
         player_collider.enabled = false;
-
         float fixedY = initialY;
-
-        float step = playerSpeed * Time.deltaTime;
-
         Vector3 targetPositionFixedY = new Vector3(targetPosition.position.x, fixedY, targetPosition.position.z);
-
-        transform.position = Vector3.MoveTowards(transform.position, targetPositionFixedY, step);
-
-        if (transform.position == targetPositionFixedY)
+        while(Vector3.Distance(transform.position, targetPositionFixedY) > 0.001f)
         {
-            isMoving = false;
-            Debug.Log("목적지 도착.");
-            player_collider.enabled = true;
+            float step = playerSpeed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, targetPositionFixedY, step);
+            yield return null;
         }
-            
+        transform.position = targetPositionFixedY;
+        player_collider.enabled = true;
+        isMoving = false;
     }
 
     private void OnCollisionEnter(Collision collision)
