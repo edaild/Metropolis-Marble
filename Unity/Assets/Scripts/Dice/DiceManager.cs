@@ -14,6 +14,7 @@ public class DiceManager : MonoBehaviour
     private readonly Dictionary<int, Vector3> finalRotations = new Dictionary<int, Vector3>()
     {
         { 1, new Vector3(90, 0, 0) },
+        { 2, new Vector3(0, 0, 0) },
         { 3, new Vector3(-90, 0, 0) },
         { 4, new Vector3(180, 0, 0) },
         { 5, new Vector3(0, 0, 90) },
