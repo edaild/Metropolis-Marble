@@ -20,17 +20,12 @@ app.post('/membership', async(req, res) =>{
     try
     {
         const [useremail] = req.body;
-        try
-        {
+        
             const[playre] =  await pool.query(
             'select * from players where player_email = ?',
              isNullData = true
             );
-        }
-        catch
-        {
-            res.status(500).json({success : false , message : "서버 에러 발생"});
-        }
+       
        
         if(isNullData){
             const[Player] = await pool.query(
