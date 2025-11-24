@@ -18,9 +18,7 @@ app.use(express.json());
 app.post('/membership', async(req, res) =>{
     const [useremail, userpassword, username] = req.body;
     try
-    {
-        const [useremail] = req.body;
-        
+    { 
             const[playre] =  await pool.query(
             'select * from players where player_email = ?',
              isNullData = true
