@@ -1,0 +1,71 @@
+
+CREATE TABLE `players` (
+  `player_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `player_email` VARCHAR(255) UNIQUE NOT NULL,
+  `player_password` VARCHAR(255) NOT NULL,
+  `player_name` VARCHAR(32) NOT NULL,
+  `player_level` INT DEFAULT 1,
+  `current_money` INT DEFAULT 0,
+  `is_dead` BOOLEAN DEFAULT FALSE,
+  `death_time` TIMESTAMP NULL,
+  `respawn_cost` INT DEFAULT 0
+);
+
+CREATE TABLE `weapon_types` (
+  `weapon_type_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `weapon_name` VARCHAR(32) NOT NULL,
+  `base_damage` INT NOT NULL,
+  `ammo_type` VARCHAR(32)
+);
+
+
+INSERT INTO `weapon_types` (`weapon_name`, `base_damage`, `ammo_type`) VALUES
+('권총', 15, 'Small Caliber'),
+('샷권', 40, 'Shell'),
+('소총', 30, 'Large Caliber');
+
+CREATE TABLE `player_inventory` (
+  `user_Inventory_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `player_id` INT NOT NULL,
+  `weapon_type_id` INT NOT NULL,
+  `item_level` INT DEFAULT 1,
+  `item_count` INT DEFAULT 1
+);
+
+CREATE TABLE `npc_types` (
+  `npc_type_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `npc_name` VARCHAR(32) NOT NULL,
+  `is_hostile` BOOLEAN NOT NULL,
+  `base_health` INT,
+  `base_damage` INT
+);
+
+CREATE TABLE `shop` (
+  `shop_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `gun_id` INT NULL,
+  `transaction_price` INT NOT NULL,
+  `transaction_date` DATETIME
+);
+INSERT INTO `shop` (`gun_id`, `transaction_price`) VALUES
+(1, 1000), -- Pistol 1000원
+(2, 3500), -- Shotgun 3500원
+(3, 2500); -- Rifle 2500원
+
+drop table shop;
+ALTER TABLE `player_inventory`
+ADD CONSTRAINT `fk_inventory_player`
+FOREIGN KEY (`player_id`) REFERENCES `players` (`player_id`);
+
+ALTER TABLE `player_inventory`
+ADD CONSTRAINT `fk_inventory_weapon_type`
+FOREIGN KEY (`weapon_type_id`) REFERENCES `weapon_types` (`weapon_type_id`);
+
+
+ALTER TABLE `shop`
+ADD CONSTRAINT `fk_shop_weapon_type`
+FOREIGN KEY (`gun_id`) REFERENCES `weapon_types` (`weapon_type_id`);
+
+select * from shop;
+
+show databases;
+
