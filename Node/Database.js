@@ -1,36 +1,45 @@
-require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
-const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
 
 const PORT = 3000;
 
 const app = express();
-app.use(bodyParser.json());
 
 const pool = mysql.createPool({
     host : 'localhost',
     user : 'root',
     password : '1234',
-    database : 'MetroPolis'
+    database : 'MiniGTA'
 
 });
 
 app.use(express.json());
 
-app.get('/charactercard', async(req, res) =>{
+app.get('/weapon_types', async(req, res) =>{
     try
     {
-        const[charactercard] = await pool.query(
-            "SELECT character_id, character_name, character_description FROM charactercard",
+        const[weapon_types] = await pool.query(
+            "SELECT weapon_type_id, weapon_name, base_damage, ammo_type FROM weapon_types",
         );
-        res.status(200).json(charactercard);
-
+        res.status(200).json(weapon_types);
     }
     catch
     {
-        res.status(500).json({success : false , message : "서버 에러 발생"});
+        res.status(500).json({success : false , message : "무기 경로 서버 에러 발생"});
+    }
+});
+
+app.get('/npc_character', async(req, res) =>{
+    try
+    {
+        const[npc_types] = await pool.query(
+            "select npc_type_id, npc_name, is_hostile, base_health, base_damage from npc_types",
+        );
+         res.status(200).json(npc_types);
+    }
+    catch
+    {
+         res.status(500).json({success : false , message : "NPC 캐릭터 경로 서버 에러 발생"});
     }
 });
 
@@ -38,13 +47,13 @@ app.get('/shop', async(req, res) =>{
     try
     {
          const[shop] = await pool.query(
-            "SELECT shop_id, c.character_name as character_name,  character_price, charactercard_count FROM shop s JOIN characterCard c on s.charactgercard_id = c.character_id",
+            "SELECT shop_id, w.weapon_name gun_name,  transaction_price, base_damage FROM shop s JOIN weapon_types w on s.gun_id = w.weapon_type_id",
         );
         res.status(200).json(shop);
     }
     catch
     {
-         res.status(500).json({success : false , message : "서버 에러 발생"});
+         res.status(500).json({success : false , message : "상점 경로 서버 에러 발생"});
     }
 })
 

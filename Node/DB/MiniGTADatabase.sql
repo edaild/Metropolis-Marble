@@ -40,6 +40,23 @@ CREATE TABLE `npc_types` (
   `base_damage` INT
 );
 
+-- 시민 NPC
+INSERT INTO npc_types (npc_name, is_hostile, base_health, base_damage) VALUES 
+('시민1', FALSE, 1000, 0), 
+('시민2', FALSE, 1000, 0), 
+('시민3', FALSE, 1000, 0), 
+('시민4', FALSE, 1000, 0),
+('시민5', FALSE, 1000, 0); 
+
+-- 경찰 NPC
+INSERT INTO npc_types (npc_name, is_hostile, base_health, base_damage) VALUES 
+('일반경찰', true, 1000, 50), 
+('강력팀 경찰', true, 1000, 100), 
+('경찰 특공대', true, 1000, 150);
+
+select npc_type_id, npc_name, is_hostile, base_health, base_damage from npc_types;
+
+
 CREATE TABLE `shop` (
   `shop_id` INT PRIMARY KEY AUTO_INCREMENT,
   `gun_id` INT NULL,
@@ -65,7 +82,5 @@ ALTER TABLE `shop`
 ADD CONSTRAINT `fk_shop_weapon_type`
 FOREIGN KEY (`gun_id`) REFERENCES `weapon_types` (`weapon_type_id`);
 
-select * from shop;
-
-show databases;
-
+select * from players;
+SELECT shop_id, w.weapon_name gun_name,  transaction_price, base_damage FROM shop s JOIN weapon_types w on s.gun_id = w.weapon_type_id
