@@ -11,6 +11,11 @@ CREATE TABLE `players` (
   `respawn_cost` INT DEFAULT 0
 );
 
+INSERT INTO players (player_email, player_password, player_name, player_level, current_money) VALUES 
+('test@gmail.com', '1234', 'testplayer', '1','1000');
+
+select * from players;
+
 CREATE TABLE `weapon_types` (
   `weapon_type_id` INT PRIMARY KEY AUTO_INCREMENT,
   `weapon_name` VARCHAR(32) NOT NULL,
